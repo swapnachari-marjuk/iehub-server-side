@@ -79,13 +79,29 @@ async function run() {
 
     // import related apis
     app.post("/imports", verifyFBToken, async (req, res) => {
+      // update quantity
+      const id = req.body.product_id;
+      const import_quantity = parseInt(req.body.import_quantity);
+      const product = await productsColl.findOne({ _id: new ObjectId(id) });
+      const newQuantity = product.available_quantity - import_quantity;
+      await productsColl.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { available_quantity: newQuantity } }
+      );
+
+      // import data adding to db
       const data = req.body;
       const result = await importsColl.insertOne(data);
       res.send(result);
     });
 
     app.get("/imports", verifyFBToken, async (req, res) => {
-      const cursor = importsColl.find();
+      const email = req.query.email;
+      const query = {};
+      if (email) {
+        query.importer_email = email;
+      }
+      const cursor = importsColl.find(query);
       const result = await cursor.toArray();
       res.send(result);
     });
