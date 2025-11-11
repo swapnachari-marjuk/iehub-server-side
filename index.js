@@ -77,6 +77,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/search/:name", async (req, res) => {
+      const { name } = req.params;
+      const query = { product_name: { $regex: name, $options: "i" } };
+      const result = await productsColl.find(query).toArray();
+      res.send(result);
+    });
+
     // import related apis
     app.post("/imports", verifyFBToken, async (req, res) => {
       // update quantity
