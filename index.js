@@ -106,7 +106,7 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/imports/:id", async (req, res) => {
+    app.delete("/imports/:id", verifyFBToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await importsColl.deleteOne(query);
