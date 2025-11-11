@@ -66,6 +66,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/products/:email",verifyFBToken, async (req, res) => {
+      const email = req.params.email;
+      const cursor = productsColl.find({ supplier_email: email });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.get("/products/:id", verifyFBToken, async (req, res) => {
       const id = req.params.id;
       const cursor = productsColl.find({ _id: new ObjectId(id) });
