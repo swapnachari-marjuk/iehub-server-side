@@ -53,6 +53,13 @@ async function run() {
     const importsColl = db.collection("imports");
 
     // product related apis
+    app.post("/products", verifyFBToken, async (req, res) => {
+      const data = req.body;
+      const result = await productsColl.insertOne(data);
+      console.log(data);
+      res.send(result);
+    });
+
     app.get("/products", async (req, res) => {
       const cursor = productsColl.find();
       const result = await cursor.toArray();
