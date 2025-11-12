@@ -81,11 +81,44 @@ async function run() {
       res.send(result);
     });
 
-    app.patch("/products/toUpdateId/:id", async (req, res) => {
+    // check
+    app.put("/products/toUpdateId/:id", verifyFBToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
+      // console.log(query);
       const updateData = { $set: req.body };
+      // console.log(req.body);
       const result = await productsColl.updateOne(query, updateData);
+      // console.log(result);
+      res.send(result);
+    });
+
+    // app.put("/products/toUpdateId/:id", verifyFBToken, async (req, res) => {
+    //   try {
+    //     const id = req.params.id;
+    //     const filter = { _id: new ObjectId(id) };
+    //     const updateDoc = { $set: req.body };
+
+    //     console.log("Updating product:", id);
+    //     console.log("With data:", req.body);
+
+    //     const result = await productsColl.updateOne(filter, updateDoc);
+
+    //     if (result.modifiedCount > 0) {
+    //       res.send({ success: true, message: "Product updated successfully" });
+    //     } else {
+    //       res.send({ success: false, message: "No document updated" });
+    //     }
+    //   } catch (error) {
+    //     console.error("Error updating product:", error);
+    //     res.status(500).send({ error: "Update failed" });
+    //   }
+    // });
+
+    app.delete("/products/deleteId/:id", verifyFBToken, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productsColl.deleteOne(query);
       res.send(result);
     });
 
