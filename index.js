@@ -81,6 +81,14 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/products/toUpdateId/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const updateData = { $set: req.body };
+      const result = await productsColl.updateOne(query, updateData);
+      res.send(result);
+    });
+
     app.get("/latest-products", async (req, res) => {
       const cursor = productsColl
         .find()
