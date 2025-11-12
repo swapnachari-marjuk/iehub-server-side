@@ -66,17 +66,18 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/products/:email",verifyFBToken, async (req, res) => {
+    app.get("/products/:email", verifyFBToken, async (req, res) => {
       const email = req.params.email;
       const cursor = productsColl.find({ supplier_email: email });
       const result = await cursor.toArray();
       res.send(result);
     });
 
-    app.get("/products/:id", verifyFBToken, async (req, res) => {
+    app.get("/products/byId/:id", async (req, res) => {
       const id = req.params.id;
-      const cursor = productsColl.find({ _id: new ObjectId(id) });
-      const result = await cursor.toArray();
+      console.log("params id", id);
+      const cursor = productsColl.findOne({ _id: new ObjectId(id) });
+      const result = await cursor;
       res.send(result);
     });
 
