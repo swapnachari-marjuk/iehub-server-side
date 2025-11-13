@@ -8,6 +8,14 @@ const port = process.env.PORT || 3000;
 
 // middlewares
 app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000/",
+      "https://import-export-hub-server-2pwuuyosa-ahmad-marjuks-projects.vercel.app/",
+    ],
+  })
+);
 app.use(express.json());
 const verifyFBToken = async (req, res, next) => {
   const authorization = req.headers.authorization;
@@ -25,7 +33,10 @@ const verifyFBToken = async (req, res, next) => {
   }
 };
 
-const serviceAccount = require("./import-export-hub-firebase-admin.json");
+const decoded = Buffer.from(process.env.FB_SERVICE_KEY, "base64").toString(
+  "utf8"
+);
+const serviceAccount = JSON.parse(decoded);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -47,7 +58,7 @@ app.get("/", (req, res) => {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db("ihub-db");
     const productsColl = db.collection("products");
     const importsColl = db.collection("imports");
@@ -176,7 +187,7 @@ async function run() {
       res.send(result);
     });
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );

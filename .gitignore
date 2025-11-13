@@ -2,3 +2,4 @@ node_modules
 .env
 imp.json
 import-export-hub-firebase-admin.json
+.vercel
