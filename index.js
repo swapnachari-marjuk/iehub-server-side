@@ -8,14 +8,6 @@ const port = process.env.PORT || 3000;
 
 // middlewares
 app.use(cors());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000/",
-      "https://import-export-hub-server-2pwuuyosa-ahmad-marjuks-projects.vercel.app/",
-    ],
-  })
-);
 app.use(express.json());
 const verifyFBToken = async (req, res, next) => {
   const authorization = req.headers.authorization;
@@ -96,35 +88,10 @@ async function run() {
     app.put("/products/toUpdateId/:id", verifyFBToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      // console.log(query);
       const updateData = { $set: req.body };
-      // console.log(req.body);
       const result = await productsColl.updateOne(query, updateData);
-      // console.log(result);
       res.send(result);
     });
-
-    // app.put("/products/toUpdateId/:id", verifyFBToken, async (req, res) => {
-    //   try {
-    //     const id = req.params.id;
-    //     const filter = { _id: new ObjectId(id) };
-    //     const updateDoc = { $set: req.body };
-
-    //     console.log("Updating product:", id);
-    //     console.log("With data:", req.body);
-
-    //     const result = await productsColl.updateOne(filter, updateDoc);
-
-    //     if (result.modifiedCount > 0) {
-    //       res.send({ success: true, message: "Product updated successfully" });
-    //     } else {
-    //       res.send({ success: false, message: "No document updated" });
-    //     }
-    //   } catch (error) {
-    //     console.error("Error updating product:", error);
-    //     res.status(500).send({ error: "Update failed" });
-    //   }
-    // });
 
     app.delete("/products/deleteId/:id", verifyFBToken, async (req, res) => {
       const id = req.params.id;
