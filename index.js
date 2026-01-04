@@ -64,7 +64,13 @@ async function run() {
     });
 
     app.get("/products", async (req, res) => {
-      const cursor = productsColl.find();
+      const { search } = req.query;
+      console.log(search);
+      const query = {};
+      if (search) {
+        query.name = search;
+      }
+      const cursor = productsColl.find(query).sort({ import_date: -1 });
       const result = await cursor.toArray();
       res.send(result);
     });
