@@ -26,7 +26,7 @@ const verifyFBToken = async (req, res, next) => {
 };
 
 const decoded = Buffer.from(process.env.FB_SERVICE_KEY, "base64").toString(
-  "utf8"
+  "utf8",
 );
 const serviceAccount = JSON.parse(decoded);
 
@@ -68,7 +68,7 @@ async function run() {
       console.log(search);
       const query = {};
       if (search) {
-        query.name = search;
+        query.product_name = { $regex: search, $options: "i" };
       }
       const cursor = productsColl.find(query).sort({ import_date: -1 });
       const result = await cursor.toArray();
@@ -133,7 +133,7 @@ async function run() {
       const newQuantity = product.available_quantity - import_quantity;
       await productsColl.updateOne(
         { _id: new ObjectId(id) },
-        { $set: { available_quantity: newQuantity } }
+        { $set: { available_quantity: newQuantity } },
       );
 
       // import data adding to db
@@ -162,7 +162,7 @@ async function run() {
 
     // await client.db("admin").command({ ping: 1 });
     console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
+      "Pinged your deployment. You successfully connected to MongoDB!",
     );
   } finally {
     // Ensures that the client will close when you finish/error. It is not for us.
