@@ -59,20 +59,31 @@ async function run() {
     app.post("/products", verifyFBToken, async (req, res) => {
       const data = req.body;
       const result = await productsColl.insertOne(data);
-      console.log(data);
+      // console.log(data);
       res.send(result);
     });
 
     app.get("/products", async (req, res) => {
-      const { search } = req.query;
-      console.log(search);
+      const { search, page, limit } = req.query;
+      // console.log(search);
+      const pageNum = Number(page);
+      const limitNum = Number(limit);
+      const skip = (pageNum - 1) * limitNum;
+
+      console.log(pageNum, limitNum);
       const query = {};
       if (search) {
         query.product_name = { $regex: search, $options: "i" };
       }
-      const cursor = productsColl.find(query).sort({ import_date: -1 });
+      const cursor = productsColl
+        .find(query)
+        .sort({ import_date: -1 })
+        .skip(skip)
+        .limit(limitNum);
       const result = await cursor.toArray();
-      res.send(result);
+
+      const dataCount = await productsColl.countDocuments();
+      res.send({ result, dataCount });
     });
 
     app.get("/products/:email", verifyFBToken, async (req, res) => {
@@ -84,7 +95,7 @@ async function run() {
 
     app.get("/products/byId/:id", async (req, res) => {
       const id = req.params.id;
-      console.log("params id", id);
+      // console.log("params id", id);
       const cursor = productsColl.findOne({ _id: new ObjectId(id) });
       const result = await cursor;
       res.send(result);
