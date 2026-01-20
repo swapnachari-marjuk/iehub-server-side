@@ -65,24 +65,36 @@ async function run() {
 
     app.get("/products", async (req, res) => {
       const { search, page, limit } = req.query;
-      // console.log(search);
       const pageNum = Number(page);
       const limitNum = Number(limit);
       const skip = (pageNum - 1) * limitNum;
 
-      console.log(pageNum, limitNum);
       const query = {};
+
       if (search) {
         query.product_name = { $regex: search, $options: "i" };
+
+        const cursor = productsColl
+          .find(query)
+          .sort({ import_date: -1 })
+          // .skip(skip)
+          // .limit(limitNum);
+
+        const result = await cursor.toArray();
+
+        res.send({ result });
       }
+
       const cursor = productsColl
         .find(query)
         .sort({ import_date: -1 })
         .skip(skip)
         .limit(limitNum);
+
       const result = await cursor.toArray();
 
       const dataCount = await productsColl.countDocuments();
+
       res.send({ result, dataCount });
     });
 
